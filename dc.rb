@@ -321,12 +321,13 @@ class DC
   end
 
   def parse_num(str, idx)
-    if m = /\A_?[\dA-F.]+/.match(str[idx..-1])
-      s = m.string.sub(/_/, '-')
+    # str[idx] must be number character
+    if m = /_?[\dA-F.]+/.match(str, idx)
+      s = m.to_s.sub(/_/, '-')
       if s =~ /\./
-        [s.to_f, idx + m.end(0)]
+        [s.to_f, m.end(0)]
       else
-        [s.to_i(@ibase), idx + m.end(0)]
+        [s.to_i(@ibase), m.end(0)]
       end
     else
       [nil, idx]
