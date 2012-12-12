@@ -322,15 +322,15 @@ class DC
 
   def parse_num(str, idx)
     # str[idx] must be number character
-    if m = /_?[\dA-F.]+/.match(str, idx)
-      s = m.to_s.sub(/_/, '-')
-      if s =~ /\./
-        [s.to_f, m.end(0)]
-      else
-        [s.to_i(@ibase), m.end(0)]
-      end
+    i2 = idx + 1
+    while str[i2..i2] =~ /[\dA-F.]/
+      i2 += 1
+    end
+    s = str[idx...i2].sub(/_/, '-')
+    if s =~ /\./
+      [s.to_f, i2]
     else
-      [nil, idx]
+      [s.to_i(@ibase), i2]
     end
   end
 
@@ -338,7 +338,7 @@ class DC
     count = 1
     p = idx
     while p < str.size && count > 0
-      c = str[p]
+      c = str[p..p]
       if c == ']'
         count -= 1
       elsif c == '['
@@ -355,7 +355,7 @@ class DC
   end
 
   def skip_whitespace(str, idx)
-    while idx < str.size && /[\s#]/ =~ (c = str[idx])
+    while idx < str.size && /[\s#]/ =~ (c = str[idx..idx])
       if c == '#'
         idx = skip_past_eol(str, idx)
       else
@@ -391,9 +391,9 @@ class DC
     next_negcmp = false
 
     while idx < string.size
-      c = string[idx]
+      c = string[idx..idx]
       idx += 1
-      peekc = string[idx]
+      peekc = string[idx..idx]
       negcmp = next_negcmp
       next_negcmp = false
 
